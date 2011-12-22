@@ -4,8 +4,9 @@ from django.conf.urls.defaults import patterns, include, url
 # from django.contrib import admin
 # admin.autodiscover()
 
-urlpatterns = patterns('',
-    url(r'^restInterface/', include('restInterface.urls')),
+urlpatterns = patterns('restInterface.views',
+    url(r'^$', 'index'),
+    url(r'^/sensor_(?P<s>\d+)-temp_(?P<t>\d+)-datetime_(?P<d>\d+)/$','restInterface.views.insert'),
 
 
     # Examples:
