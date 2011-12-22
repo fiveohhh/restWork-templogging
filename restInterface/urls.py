@@ -6,7 +6,7 @@ from django.conf.urls.defaults import patterns, include, url
 
 urlpatterns = patterns('restInterface.views',
     url(r'^$', 'index'),
-    url(r'^/sensor_(?P<s>\d+)-temp_(?P<t>\d+)-datetime_(?P<d>\d+)/$','restInterface.views.insert'),
+    url(r'^sensor_(?P<s>\d+)-temp_(?P<t>\d+)-datetime_(?P<d>\d+)/$','insert'),
 
 
     # Examples:

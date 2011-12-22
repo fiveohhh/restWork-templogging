@@ -6,6 +6,7 @@ from django.conf.urls.defaults import patterns, include, url
 
 urlpatterns = patterns('',
     url(r'^restInterface/', include('restInterface.urls')),
+    url(r'^status/', include('status.urls')),
 
 
     # Examples:
