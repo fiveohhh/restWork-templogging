@@ -1,0 +1,9 @@
+{% extends "../templates/status/base.html" %}
+
+{% block content %}
+Temp status:<br>
+    {% for t in temps %}
+        {{ t }}<br>
+    {% endfor %}
+{% endblock %}
+
