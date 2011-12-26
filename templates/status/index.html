@@ -6,6 +6,10 @@ Temp status:<br>
         {{ t }}<br>
     {% endfor %}
 <br>
+Yesterdays HVAC usage:<br>
+    {% for h in hvac_usage %}
+        {{ h }}<br>
+    {% endfor %}
 <br>
 Door status:<br>
     {% for d in doors %}

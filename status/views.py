@@ -1,6 +1,6 @@
 # Create your views here.
 from django.http import HttpResponse
-from restInterface.models import Temp_entry, door_entry
+from restInterface.models import Temp_entry, door_entry, hvac_runtime
 from django.template import Context, loader
 import datetime
 
@@ -64,12 +64,23 @@ def index(request):
         lastUpdated = " Last updated: " + str(datetime.datetime.fromtimestamp(d.dateTime))
         
         doors.append("".join(name + doorStatus + lastUpdated))
+    ############## END Get doors #####################
+    
+    ############## Get latest HVAC usage #############
+    lastHvacEntry = hvac_runtime.objects.all().order_by('dateTime').reverse()[0]
+    hvac_usage = []
+    
+    heatUsage = "Heat: " + str(lastHvacEntry.heatMinutes) + ', '
+    coolUsage = "Cool: " + str(lastHvacEntry.coolMinutes) + '\n'
 
+    hvac_usage.append("".join(heatUsage + coolUsage))
+    ############ END Get latest HVAC usage ############
 
     t = loader.get_template('status/index.html')
     c = Context({
         'temps' : temps,
         'doors' : doors,
+        'hvac_usage' : hvac_usage,
     })
 
     return HttpResponse(t.render(c))
