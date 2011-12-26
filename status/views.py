@@ -1,10 +1,12 @@
 # Create your views here.
 from django.http import HttpResponse
-from restInterface.models import Temp_entry
+from restInterface.models import Temp_entry, door_entry
 from django.template import Context, loader
 import datetime
 
 def index(request):
+   
+    ############ Get temps ###############
     # Get distinct sensor values
     distinctSensorVals = Temp_entry.objects.values('sensor').distinct()
     
@@ -15,7 +17,6 @@ def index(request):
         sensorHistory = Temp_entry.objects.filter(sensor=sensor['sensor'])
         lastEntry = sensorHistory.order_by('dateTime').reverse()[0]
         lastTemps.append(lastEntry)
-
     
     temps = []    
     
@@ -34,10 +35,39 @@ def index(request):
         updated = str(datetime.datetime.fromtimestamp(t.dateTime))
         out = name + temp + updated
         temps.append( "".join(out))
+    ############# END Get temps ###############
+
+
+    ############ Get doors ####################
+    distinctDoorVals = door_entry.objects.values('doorNumber').distinct()
     
+    # list of last door_entry objects
+    lastDoorVals = []
+
+    # List of display strings for door status
+    doors = []
+
+    for door in distinctDoorVals:
+        doorHistory = door_entry.objects.filter(doorNumber=door['doorNumber'])
+        lastEntry = doorHistory.order_by('dateTime').reverse()[0]
+        lastDoorVals.append(lastEntry)
+
+    for d in lastDoorVals:
+        name = 'Unknown: '
+        if d.doorNumber == 0:
+            name = 'Garage: '
+        
+        doorStatus = "Open"
+        if d.isOpen == 0:
+            doorStatus = "Closed"
+        
+        doors.append("".join(name + doorStatus))
+
+
     t = loader.get_template('status/index.html')
     c = Context({
         'temps' : temps,
+        'doors' : doors,
     })
 
     return HttpResponse(t.render(c))
