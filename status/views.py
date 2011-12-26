@@ -31,7 +31,7 @@ def index(request):
             name = 'Kitchen: ' 
         
         #TODO Format these strings so they look decent on the web page
-        temp = str(((t.temp/100) - 273.15) * 1.8 + 32) + 'F   Last Updated:'
+        temp = str(((t.temp/100.0) - 273.15) * 1.8 + 32) + 'F   Last Updated:'
         updated = str(datetime.datetime.fromtimestamp(t.dateTime))
         out = name + temp + updated
         temps.append( "".join(out))
