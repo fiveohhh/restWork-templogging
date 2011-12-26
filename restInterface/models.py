@@ -30,4 +30,21 @@ class door_entry(models.Model):
         return ('GMT: ' + str(datetime.datetime.fromtimestamp(self.dateTime)) + '\n' +
                 'Door#: ' + str(self.doorNumber) + '\n' +
                 'isOpen: ' + str(self.isOpen) + '\n')
-                 
+
+
+# dateTime is the datetime that the entry was made.  data is for the previous day
+class hvac_runtime(models.Model):
+    dateTime = models.IntegerField()    # date reading was taken
+    heatMinutes = models.IntegerField() # minutes heat was running
+    coolMinutes = models.IntegerField() # minutes cool was running
+
+    def create(date, heatMins, coolMins):
+        return hvac_runtime(dateTime = date, heatMinutes = heatMins, coolMinutes = coolMins)
+    create = staticmethod(create)
+
+    def __unicode__(self):
+        return('Usage on: ' + str((datetime.datetime.fromtimestamp(self.dateTime) - datetime.timedelta(days=1)).strftime('%m-%d-%y')) + '\n' +
+                'heat: ' + str(self.heatMinutes) + '\n' +
+                'cool: ' + str(self.coolMinutes) + '\n')
+
+
