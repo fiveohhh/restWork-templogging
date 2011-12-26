@@ -3,16 +3,16 @@
 {% block content %}
 <span class="sectionHeading">Temp:</span><br>
     {% for t in temps %}
-       <span class="tempSensor">{{ t.name }}</span><span class="temp">{{t.temp}}</span><span class="updated"> {{t.updated}}</span><br>
+       <span class="tempSensor">{{ t.name }}</span><span class="temp">{{t.temp}}</span><span class="updated"> Updated:{{t.updated}}</span><br>
     {% endfor %}
 <br>
 <span class="sectionHeading">Yesterdays HVAC usage:</span><br>
     {% for h in hvac_usage %}
-       {{ h }} <br>
+       Heat: {{ h.heatUsage }} minutes<br> Cool: {{ h.coolUsage}} minutes <br>
     {% endfor %}
 <br>
 <span class="sectionHeading">Door status:</span><br>
     {% for d in doors %}
-        {{ d }} <br>
+        <span class="doorName">{{ d.name }}</span><span class="doorStatus">{{d.doorStatus}}</span><span class="updated"> Updated:{{d.updated}}</span><br>
     {%endfor %}
 {% endblock %}

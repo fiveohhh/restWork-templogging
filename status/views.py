@@ -34,7 +34,7 @@ def index(request):
             tempEntry['name'] += 'Unknown: '
         #TODO Format these strings so they look decent on the web page
         tempEntry['temp'] = str(((t.temp/100.0) - 273.15) * 1.8 + 32) + 'F' 
-        tempEntry['updated'] = 'Updated : ' + str(datetime.datetime.fromtimestamp(t.dateTime))
+        tempEntry['updated'] = str(datetime.datetime.fromtimestamp(t.dateTime))
         temps.append(tempEntry)
     ############# END Get temps ###############
 
@@ -54,27 +54,29 @@ def index(request):
         lastDoorVals.append(lastEntry)
 
     for d in lastDoorVals:
-        name = 'Unknown: '
+        door = {}
+        door['name'] = 'Unknown: '
         if d.doorNumber == 0:
-            name = 'Garage: '
+            door['name'] = 'Garage: '
         
-        doorStatus = "Open"
+        door['doorStatus'] = "Open"
         if d.isOpen == 0:
-            doorStatus = "Closed"
+            door['doorStatus'] = "Closed"
 
-        lastUpdated = " Last updated: " + str(datetime.datetime.fromtimestamp(d.dateTime))
+        door['updated'] = str(datetime.datetime.fromtimestamp(d.dateTime))
         
-        doors.append("".join(name + doorStatus + lastUpdated))
+        doors.append(door)
     ############## END Get doors #####################
     
     ############## Get latest HVAC usage #############
     lastHvacEntry = hvac_runtime.objects.all().order_by('dateTime').reverse()[0]
     hvac_usage = []
     
-    heatUsage = "Heat: " + str(lastHvacEntry.heatMinutes) + ', '
-    coolUsage = "Cool: " + str(lastHvacEntry.coolMinutes) + '\n'
+    hvac_entry = {}
+    hvac_entry['heatUsage'] =  str(lastHvacEntry.heatMinutes)
+    hvac_entry['coolUsage'] =  str(lastHvacEntry.coolMinutes)
 
-    hvac_usage.append("".join(heatUsage + coolUsage))
+    hvac_usage.append(hvac_entry)
     ############ END Get latest HVAC usage ############
 
     t = loader.get_template('status/index.html')
