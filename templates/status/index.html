@@ -1,7 +1,7 @@
 {% extends "../templates/status/base.html" %}
-
+{% block heading %}Status{% endblock %}
 {% block content %}
-<span class="sectionHeading">Temp status:</span><br>
+<span class="sectionHeading">Temp:</span><br>
     {% for t in temps %}
        <span class="tempSensor">{{ t.name }}</span><span class="temp">{{t.temp}}</span><span class="updated"> {{t.updated}}</span><br>
     {% endfor %}
