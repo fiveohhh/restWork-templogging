@@ -22,19 +22,20 @@ def index(request):
     
     # Put into readable string
     for t in lastTemps:
-        name = 'Unknown: '
+        tempEntry = {}
+        tempEntry['name'] = ''
         if t.sensor == 48:
-            name = 'Garage: '
+            tempEntry['name'] += 'Garage: '
         elif t.sensor == 49:
-            name = 'Outside: '
+            tempEntry['name'] += 'Outside: '
         elif t.sensor == 50:
-            name = 'Kitchen: ' 
-        
+            tempEntry['name'] += 'Kitchen: ' 
+        else:
+            tempEntry['name'] += 'Unknown: '
         #TODO Format these strings so they look decent on the web page
-        temp = str(((t.temp/100.0) - 273.15) * 1.8 + 32) + 'F   Last Updated:'
-        updated = str(datetime.datetime.fromtimestamp(t.dateTime))
-        out = name + temp + updated
-        temps.append( "".join(out))
+        tempEntry['temp'] = str(((t.temp/100.0) - 273.15) * 1.8 + 32) + 'F' 
+        tempEntry['updated'] = 'Updated : ' + str(datetime.datetime.fromtimestamp(t.dateTime))
+        temps.append(tempEntry)
     ############# END Get temps ###############
 
 

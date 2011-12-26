@@ -1,17 +1,17 @@
 {% extends "../templates/status/base.html" %}
 
 {% block content %}
-Temp status:<br>
+<span class="sectionHeading">Temp status:</span><br>
     {% for t in temps %}
-        {{ t }}<br>
+       <span class="tempSensor">{{ t.name }}</span><span class="temp">{{t.temp}}</span><span class="updated"> {{t.updated}}</span><br>
     {% endfor %}
 <br>
-Yesterdays HVAC usage:<br>
+<span class="sectionHeading">Yesterdays HVAC usage:</span><br>
     {% for h in hvac_usage %}
-        {{ h }}<br>
+       {{ h }} <br>
     {% endfor %}
 <br>
-Door status:<br>
+<span class="sectionHeading">Door status:</span><br>
     {% for d in doors %}
         {{ d }} <br>
     {%endfor %}
