@@ -60,8 +60,10 @@ def index(request):
         doorStatus = "Open"
         if d.isOpen == 0:
             doorStatus = "Closed"
+
+        lastUpdated = " Last updated: " + str(datetime.datetime.fromtimestamp(d.dateTime))
         
-        doors.append("".join(name + doorStatus))
+        doors.append("".join(name + doorStatus + lastUpdated))
 
 
     t = loader.get_template('status/index.html')
