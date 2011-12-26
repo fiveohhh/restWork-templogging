@@ -7,7 +7,7 @@ from django.conf.urls.defaults import patterns, include, url
 urlpatterns = patterns('restInterface.views',
     url(r'^$', 'index'),
     url(r'^sensor_(?P<s>\d+)-temp_(?P<t>\d+)-datetime_(?P<d>\d+)/$','insert'),
-    url(r'^msg/(P<msg>\.+)/$','processMsg'),
+    url(r'^msg/(?P<msg>.+)/$','processMsg'),
 
     # Examples:
     # url(r'^$', 'leeHouseSite.views.home', name='home'),
