@@ -15,4 +15,32 @@
     {% for d in doors %}
         <span class="doorName">{{ d.name }}</span><span class="doorStatus">{{d.doorStatus}}</span><span class="updated"> Updated:{{d.updated}}</span><br>
     {%endfor %}
+
+<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+    <script type="text/javascript">
+      google.load("visualization", "1", {packages:["corechart"]});
+      google.setOnLoadCallback(drawChart);
+      function drawChart() {
+        var data = new google.visualization.DataTable();
+        data.addColumn('string', 'id');
+        data.addColumn('number', 'Outside');
+        data.addColumn('number', 'Kitchen');
+        data.addRows([
+            {% for temps in plotPointList %}
+                ['{{temps.id}}',{{temps.outside}},{{temps.kitchen}}],
+            {% endfor %}
+        ]);
+
+        var options = {
+          width: 400, height: 240,
+          title: 'Last 24 hours'
+        };
+
+        var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
+        chart.draw(data, options);
+      }
+    </script>
+
+<div id="chart_div"></div>
+
 {% endblock %}
