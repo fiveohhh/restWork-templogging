@@ -3,7 +3,9 @@ from restInterface.models import Temp_entry, door_entry
 import time
 
 def insert(request, s, t, d):
-    te = Temp_entry.create(int(d), int(s), int(t))
+    # override incoming time with current server time github issue#2
+    currentTime = round(time.time())
+    te = Temp_entry.create(int(currentTime), int(s), int(t))
     te.save()
     retString = s + ' temp:' + t + ' date:' + d
     return HttpResponse(retString)
