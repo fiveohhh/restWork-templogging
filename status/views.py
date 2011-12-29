@@ -3,7 +3,7 @@ from django.http import HttpResponse
 from restInterface.models import Temp_entry, door_entry, hvac_runtime
 from django.template import Context, loader
 import datetime
-
+from django.core.cache import cache
 
 def getHistoryToGraph(querySetOfTemp_entry):
     historyCnt = range(290)#we want the last 72*4 entries
@@ -61,9 +61,13 @@ def index(request):
     #########
     # get outside temps, newest entries first
     revOutsideTempHistory = Temp_entry.objects.filter(sensor=49).order_by('dateTime').reverse()
+    cache.set('temp_entries', revOutsideTempHistory,120)
+    cache.get('temp_entries') 
     outsideTemps = getHistoryToGraph(revOutsideTempHistory)
-    
+
     revInsideTempHistory = Temp_entry.objects.filter(sensor=50).order_by('dateTime').reverse()
+    cache.set('temp_entriesi', revInsideTempHistory,120)
+    cache.get('temp_entriesi') 
     kitchenTemps = getHistoryToGraph(revInsideTempHistory)
     print str(len(kitchenTemps))
     plotPointList = []

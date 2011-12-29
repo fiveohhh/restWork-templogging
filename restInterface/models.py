@@ -2,8 +2,8 @@ from django.db import models
 import datetime
 
 class Temp_entry(models.Model):
-    dateTime = models.IntegerField() #datetime as unixepoch gmt
-    sensor = models.IntegerField()   # id of sensor
+    dateTime = models.IntegerField(db_index=True) #datetime as unixepoch gmt
+    sensor = models.IntegerField(db_index=True)   # id of sensor
     temp = models.IntegerField()     # temp as temp in Kelvin * 100
     
     def create(date, sen, tmpVal):
