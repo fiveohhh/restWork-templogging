@@ -15,6 +15,12 @@ def getHistoryToGraph(querySetOfTemp_entry):
     retArray.reverse() 
     return retArray #oldest first
 
+def GetInHMS(seconds):
+    hours = seconds / 3600
+    seconds -= 3600*hours
+    minutes = seconds / 60
+    seconds -= 60*minutes
+    return "[%02d,%02d,%02d]" % (hours, minutes, seconds)
 
 def index(request):
    
@@ -76,7 +82,7 @@ def index(request):
         plotPoint = {} 
         plotPoint['kitchen'] = kitchenTemps[i]
         plotPoint['outside'] = outsideTemps[i]
-        plotPoint['id'] = i / 3.0 
+        plotPoint['hms'] = GetInHMS(i*20*60)#20 minutes, 60 seconds in a minute
         plotPointList.append(plotPoint)
    
     ############ Get doors ####################
