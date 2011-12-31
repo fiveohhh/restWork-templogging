@@ -1,0 +1,33 @@
+{% extends "../templates/status/base.html" %}
+{% block heading %}Detailed temp for XX{% endblock %}
+{% block content %}
+<span class="sectionHeading">Temp:</span><br>
+       <span class="tempSensor">{{ latestReading.name }}</span><span class="temp">{{latestReading.temp}}</span><span class="updated"> Updated:{{latestReading.updated}}</span><br>
+
+<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+    <script type="text/javascript">
+      google.load("visualization", "1", {packages:["corechart"]});
+      google.setOnLoadCallback(drawChart);
+      function drawChart() {
+        var data = new google.visualization.DataTable();
+        data.addColumn('datetime', 'hms');
+        data.addColumn('number', '{{latestReading.name}}');
+        data.addRows([
+            {% for t in temps %}
+                [new Date({{t.dateTime.year}}, {{t.dateTime.month}}-1,{{t.dateTime.day}},{{t.dateTime.hour}},{{t.dateTime.minute}},{{t.dateTime.second}}),{{t.temp}}],
+            {% endfor %}
+        ]);
+
+        var options = {
+          width: 800, height: 240,
+          title: 'Last 24 hours'
+        };
+
+        var chart = new google.visualization.LineChart(document.getElementById('chart_div_week'));
+        chart.draw(data, options);
+      }
+    </script>
+
+<div id="chart_div_week"></div>
+
+{% endblock %}

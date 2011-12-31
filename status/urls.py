@@ -6,7 +6,7 @@ from django.conf.urls.defaults import patterns, include, url
 
 urlpatterns = patterns('status.views',
     url(r'^$', 'index'),
-
+    url(r'^detailedTemp/sensor_(?P<sensor>\d+)/$', 'detailedTemp'),
 
     # Examples:
     # url(r'^$', 'leeHouseSite.views.home', name='home'),

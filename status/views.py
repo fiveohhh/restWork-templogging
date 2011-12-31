@@ -4,7 +4,9 @@ from restInterface.models import Temp_entry, door_entry, hvac_runtime
 from django.template import Context, loader
 import datetime
 from django.core.cache import cache
+import time
 
+# for status page only
 def getHistoryToGraph(querySetOfTemp_entry):
     historyCnt = range(290)#we want the last 72*4 entries
     retArray = []
@@ -15,12 +17,89 @@ def getHistoryToGraph(querySetOfTemp_entry):
     retArray.reverse() 
     return retArray #oldest first
 
+# convert seconds to HMS
 def GetInHMS(seconds):
     hours = seconds / 3600
     seconds -= 3600*hours
     minutes = seconds / 60
     seconds -= 60*minutes
     return "[%02d,%02d,%02d]" % (hours, minutes, seconds)
+
+#returns the string for numbered sensor
+def getSensorName(sensor):
+    if sensor == 48: 
+        return 'Garage'
+    elif sensor == 49:
+        return 'Outside'
+    elif sensor == 50:
+        return 'Kitchen'
+    else:
+        return 'Unknown'
+
+class IndividualTempReading:
+    def __init__(self, dateTime, temp):
+        self.dateTime = dateTime
+        self.temp = temp
+
+# queryset should be ordered and have newest entry first
+def getHistoryWithDateTime(queryset, secondsWorthOfHistory, numberOfDataPoints):
+    delta = datetime.timedelta(seconds = secondsWorthOfHistory) 
+    now = datetime.datetime.now()
+    dateTimeOfOldestEntry = now - delta
+    unixTimeOfOldestEntry = time.mktime(dateTimeOfOldestEntry.timetuple())
+    timeFilteredSet = queryset.filter(dateTime__gte=unixTimeOfOldestEntry)
+    numOfEntries = timeFilteredSet.count()
+    if numOfEntries == 0:
+        emptyList = []
+        return emptyList
+    
+    modVal = 0
+    dataPoints = 0
+    if numberOfDataPoints >= numOfEntries:
+        modVal = 1
+        dataPoints = numOfEntries
+    else:
+        modVal = (numOfEntries/numberOfDataPoints) + 1
+        dataPoints = numberOfDataPoints
+    print modVal
+    print ' ' + str(dataPoints)
+    dataRange = range(numOfEntries)
+    retList = []
+    print time.time()
+    for i in dataRange:
+        if i % modVal == 0:
+            ent = timeFilteredSet[i]
+            tempF = (((ent.temp/100.0) - 273.15) * 1.8 + 32) 
+            retList.append(IndividualTempReading(datetime.datetime.fromtimestamp(ent.dateTime),tempF))
+    retList.reverse()
+    print time.time()
+    return retList 
+
+
+def detailedTemp(request, sensor):
+    sensorName = getSensorName(sensor)
+    revTempHistory = Temp_entry.objects.filter(sensor=sensor).order_by('dateTime').reverse()
+    temps = getHistoryWithDateTime(revTempHistory, 3600*24*7*4*12, 200)
+    t = loader.get_template('status/detailedTemp.html')
+    c = Context({
+        'temps' : temps,
+    })
+
+    return HttpResponse(t.render(c))
+
+
+    #get years worth of data
+
+    #divide into resonable amount of data points for one year graph
+
+    #divide into amounts for 6 month 
+
+    #divide into amounts for 1 month
+
+    #divide into amounts for 1 week
+
+    #divide into amounts for 1 day
+
 
 def index(request):
    
@@ -44,15 +123,7 @@ def index(request):
         #TODO Format these strings so they look decent on the web page
         tempEntry['temp'] = str(((t.temp/100.0) - 273.15) * 1.8 + 32) + 'F' 
         tempEntry['updated'] = str(datetime.datetime.fromtimestamp(t.dateTime))
-        tempEntry['name'] = ''
-        if t.sensor == 48:
-            tempEntry['name'] += 'Garage: '
-        elif t.sensor == 49:
-            tempEntry['name'] += 'Outside: '
-        elif t.sensor == 50:
-            tempEntry['name'] += 'Kitchen: ' 
-        else:
-            tempEntry['name'] += 'Unknown: '
+        tempEntry['name'] = getSensorName(t.sensor) + ': '
         temps.append(tempEntry)
    
     ############# END Get temps ###############
