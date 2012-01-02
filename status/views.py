@@ -71,14 +71,14 @@ def getHistoryWithDateTime(queryset, secondsWorthOfHistory, numberOfDataPoints):
     
     dataRange = range(numOfEntries)
     retList = []
-    print time.time()
-    for i in dataRange:
+    i = 0
+    for t in revTimeFilteredSet:
+        i = i+1
         if i % modVal == 0:
-            ent = timeFilteredSet[i]
+            ent = t
             tempF = (((ent.temp/100.0) - 273.15) * 1.8 + 32) 
             retList.append(IndividualTempReading(datetime.datetime.fromtimestamp(ent.dateTime),tempF))
     retList.reverse()
-    print time.time()
     return retList 
 
 
