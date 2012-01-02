@@ -6,25 +6,6 @@ import datetime
 from django.core.cache import cache
 import time
 
-# for status page only
-# Gets the datapoints for the summary graph on the main status page
-def getHistoryToGraph(querySetOfTemp_entry):
-    historyCnt = range(290)#we want the last 72*4 entries
-    retArray = []
-    for i in historyCnt:
-        if i % 4 == 0:
-            temp =  str(((querySetOfTemp_entry[i].temp/100.0) - 273.15) * 1.8 + 32) 
-            retArray.append(temp)
-    retArray.reverse() 
-    return retArray #oldest first
-
-# convert seconds to HMS
-def GetInHMS(seconds):
-    hours = seconds / 3600
-    seconds -= 3600*hours
-    minutes = seconds / 60
-    seconds -= 60*minutes
-    return "[%02d,%02d,%02d]" % (hours, minutes, seconds)
 
 #returns the string for numbered sensor
 def getSensorName(sensor):
@@ -44,7 +25,7 @@ class IndividualTempReading:
         self.temp = temp
 
 # Will return 'numberOfDataPoints' that are evenly divided for the past 'secondsWorthOfHistory
-# queryset should be ordered and have newest entry first
+# queryset should be filtered for an individual sensor if desired output is only for a single sensor
 def getHistoryWithDateTime(queryset, secondsWorthOfHistory, numberOfDataPoints):
     # Get a time object that is secondsWorthOfHistory in length
     delta = datetime.timedelta(seconds = secondsWorthOfHistory)
@@ -61,8 +42,11 @@ def getHistoryWithDateTime(queryset, secondsWorthOfHistory, numberOfDataPoints):
     # Filter queryset to only items within our desired history
     timeFilteredSet = queryset.filter(dateTime__gte=unixTimeOfOldestEntry)
 
+    # Order oldest to newest
+    revTimeFilteredSet = timeFilteredSet.order_by('dateTime').reverse()
+
     # Get number of items in queryset
-    numOfEntries = timeFilteredSet.count()
+    numOfEntries = revTimeFilteredSet.count()
 
     # If there is no history, return an empty list
     if numOfEntries == 0:
@@ -101,7 +85,7 @@ def getHistoryWithDateTime(queryset, secondsWorthOfHistory, numberOfDataPoints):
 # Renders a page for a detailed request for an individual sensor
 def detailedTemp(request, sensor):
     sensorName = getSensorName(sensor)
-    revTempHistory = Temp_entry.objects.filter(sensor=sensor).order_by('dateTime').reverse()
+    revTempHistory = Temp_entry.objects.filter(sensor=sensor)
     temps = getHistoryWithDateTime(revTempHistory, 3600*24*7*4*12, 200)
     t = loader.get_template('status/detailedTemp.html')
     c = Context({
@@ -161,25 +145,16 @@ def index(request):
     # since we only want specific vals to display
     #########
     # get outside temps, newest entries first
-    revOutsideTempHistory = Temp_entry.objects.filter(sensor=49).order_by('dateTime').reverse()
-    cache.set('temp_entries', revOutsideTempHistory,120)
-    cache.get('temp_entries') 
-    outsideTemps = getHistoryToGraph(revOutsideTempHistory)
+    outsideTempHistory = getHistoryWithDateTime(Temp_entry.objects.filter(sensor=49), 60*60*24, 6*24)# last 24 hours of data, 6 readings an hour
+    cache.set('temp_entries_o', outsideTempHistory,120)
+    cache.get('temp_entries_o') 
 
-    revInsideTempHistory = Temp_entry.objects.filter(sensor=50).order_by('dateTime').reverse()
-    cache.set('temp_entriesi', revInsideTempHistory,120)
-    cache.get('temp_entriesi') 
-    kitchenTemps = getHistoryToGraph(revInsideTempHistory)
-    print str(len(kitchenTemps))
-    plotPointList = []
-    historyCnt = range(72)
-    for i in historyCnt:
-        plotPoint = {} 
-        plotPoint['kitchen'] = kitchenTemps[i]
-        plotPoint['outside'] = outsideTemps[i]
-        plotPoint['hms'] = GetInHMS(i*20*60)#20 minutes, 60 seconds in a minute
-        plotPointList.append(plotPoint)
-   
+    insideTempHistory = getHistoryWithDateTime(Temp_entry.objects.filter(sensor=50), 60*60*24, 6*24)
+    cache.set('temp_entries_i', insideTempHistory,120)
+    cache.get('temp_entries_i') 
+    
+
+
     ############ Get doors ####################
     distinctDoorVals = door_entry.objects.values('doorNumber').distinct()
     
@@ -225,7 +200,8 @@ def index(request):
         'temps' : temps,
         'doors' : doors,
         'hvac_usage' : hvac_usage,
-        'plotPointList' : plotPointList,
+        'outsideTempHistory' : outsideTempHistory,
+        'insideTempHistory' : insideTempHistory
     })
 
     return HttpResponse(t.render(c))

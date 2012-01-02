@@ -22,19 +22,24 @@
       google.setOnLoadCallback(drawChart);
       function drawChart() {
         var data = new google.visualization.DataTable();
-        data.addColumn('timeofday', 'hms');
+        data.addColumn('datetime', 'hms');
         data.addColumn('number', 'Outside');
         data.addColumn('number', 'Kitchen');
         data.addRows([
-            {% for temps in plotPointList %}
-                [{{temps.hms}},{{temps.outside}},{{temps.kitchen}}],
+            {% for t in outsideTempHistory %}
+                [new Date({{t.dateTime.year}}, {{t.dateTime.month}}-1,{{t.dateTime.day}},{{t.dateTime.hour}},{{t.dateTime.minute}},{{t.dateTime.second}}),{{t.temp}},null],
+            {% endfor %}
+            {% for t in insideTempHistory %}
+                [new Date({{t.dateTime.year}}, {{t.dateTime.month}}-1,{{t.dateTime.day}},{{t.dateTime.hour}},{{t.dateTime.minute}},{{t.dateTime.second}}),null,{{t.temp}}],
             {% endfor %}
         ]);
 
         var options = {
           width: 400, height: 240,
-          title: 'Last 24 hours'
-        };
+          title: 'Last 24 hours',
+          interpolateNulls:true,
+          strictFirstColumnType:true    
+    };
 
         var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
         chart.draw(data, options);
