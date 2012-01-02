@@ -7,6 +7,7 @@ from django.core.cache import cache
 import time
 
 # for status page only
+# Gets the datapoints for the summary graph on the main status page
 def getHistoryToGraph(querySetOfTemp_entry):
     historyCnt = range(290)#we want the last 72*4 entries
     retArray = []
@@ -36,33 +37,54 @@ def getSensorName(sensor):
     else:
         return 'Unknown'
 
+# Holds information from a single temp logging event
 class IndividualTempReading:
     def __init__(self, dateTime, temp):
         self.dateTime = dateTime
         self.temp = temp
 
+# Will return 'numberOfDataPoints' that are evenly divided for the past 'secondsWorthOfHistory
 # queryset should be ordered and have newest entry first
 def getHistoryWithDateTime(queryset, secondsWorthOfHistory, numberOfDataPoints):
-    delta = datetime.timedelta(seconds = secondsWorthOfHistory) 
+    # Get a time object that is secondsWorthOfHistory in length
+    delta = datetime.timedelta(seconds = secondsWorthOfHistory)
+
+    # Get current time  
     now = datetime.datetime.now()
+
+    # Get a dateTimeObject that represents the earliest time we want to get data from
     dateTimeOfOldestEntry = now - delta
+
+    # Convert dateTime to a unix timestamp
     unixTimeOfOldestEntry = time.mktime(dateTimeOfOldestEntry.timetuple())
+    
+    # Filter queryset to only items within our desired history
     timeFilteredSet = queryset.filter(dateTime__gte=unixTimeOfOldestEntry)
+
+    # Get number of items in queryset
     numOfEntries = timeFilteredSet.count()
+
+    # If there is no history, return an empty list
     if numOfEntries == 0:
         emptyList = []
         return emptyList
     
+    
     modVal = 0
+    
+    # Need a separate dataPOints in case we ask for more than is available.
+    # if that is the case, we will return everything we have
     dataPoints = 0
     if numberOfDataPoints >= numOfEntries:
+        # If we ask for more than we have, return everything we have
         modVal = 1
         dataPoints = numOfEntries
     else:
+        # else we want to grab dataPoints worth of data that is evenly
+        # spaced throughout our history
         modVal = (numOfEntries/numberOfDataPoints) + 1
         dataPoints = numberOfDataPoints
-    print modVal
-    print ' ' + str(dataPoints)
+    
     dataRange = range(numOfEntries)
     retList = []
     print time.time()
@@ -76,6 +98,7 @@ def getHistoryWithDateTime(queryset, secondsWorthOfHistory, numberOfDataPoints):
     return retList 
 
 
+# Renders a page for a detailed request for an individual sensor
 def detailedTemp(request, sensor):
     sensorName = getSensorName(sensor)
     revTempHistory = Temp_entry.objects.filter(sensor=sensor).order_by('dateTime').reverse()
@@ -101,6 +124,7 @@ def detailedTemp(request, sensor):
     #divide into amounts for 1 day
 
 
+# renders main summary page for status
 def index(request):
    
     ############ Get temps ###############
