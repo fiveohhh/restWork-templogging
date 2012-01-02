@@ -1,8 +1,7 @@
 {% extends "../templates/status/base.html" %}
-{% block heading %}Detailed temp for XX{% endblock %}
+{% block heading %}Detailed temp for {{ latestReading.name  }} sensor{% endblock %}
 {% block content %}
-<span class="sectionHeading">Temp:</span><br>
-       <span class="tempSensor">{{ latestReading.name }}</span><span class="temp">{{latestReading.temp}}</span><span class="updated"> Updated:{{latestReading.updated}}</span><br>
+
 
 <script type="text/javascript" src="https://www.google.com/jsapi"></script>
     <script type="text/javascript">

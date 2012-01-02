@@ -72,6 +72,7 @@ def getHistoryWithDateTime(queryset, secondsWorthOfHistory, numberOfDataPoints):
     dataRange = range(numOfEntries)
     retList = []
     i = 0
+    print time.time()
     for t in revTimeFilteredSet:
         i = i+1
         if i % modVal == 0:
@@ -79,6 +80,7 @@ def getHistoryWithDateTime(queryset, secondsWorthOfHistory, numberOfDataPoints):
             tempF = (((ent.temp/100.0) - 273.15) * 1.8 + 32) 
             retList.append(IndividualTempReading(datetime.datetime.fromtimestamp(ent.dateTime),tempF))
     retList.reverse()
+    print time.time()
     return retList 
 
 
@@ -87,9 +89,14 @@ def detailedTemp(request, sensor):
     sensorName = getSensorName(sensor)
     revTempHistory = Temp_entry.objects.filter(sensor=sensor)
     temps = getHistoryWithDateTime(revTempHistory, 3600*24*7*4*12, 200)
+    latestReading = {}
+    print 'sensor: '
+    print sensor
+    latestReading['name'] = getSensorName(int(sensor))
     t = loader.get_template('status/detailedTemp.html')
     c = Context({
         'temps' : temps,
+        'latestReading' : latestReading
     })
 
     return HttpResponse(t.render(c))
