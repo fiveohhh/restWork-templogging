@@ -38,8 +38,10 @@
           width: 400, height: 240,
           title: 'Last 24 hours',
           interpolateNulls:true,
-          strictFirstColumnType:true    
-    };
+          strictFirstColumnType:true,    
+          hAxis:{format:'k:mm'}
+        };
+    
 
         var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
         chart.draw(data, options);
