@@ -26,16 +26,28 @@ def insert(request, s, t, d):
 
 def processMsg(request, msg):
     if (msg.startswith("DOR")):
-        # DORXYZ -- X=destination, Y=doorNumber, Z=isOpen
-        # Door status message received
-        doorNumber = int(msg[4])
-        isOpen = int(msg[5])
-        dateTime = time.time()
-        doorEntry = door_entry.create(dateTime, doorNumber, isOpen)
-        doorEntry.save()
-        print doorEntry
+        processDoorMsg(msg) 
     else:
         print "Unknown detected"
         # Unknown message received
     
     return HttpResponse("ok")
+
+def processDoorMsg(msg):
+    # DORXYZ -- X=destination, Y=doorNumber, Z=isOpen
+    # Door status message received
+    msgIsOpen = int(msg[5])
+    msgDoorNumber = int(msg[4])
+
+    # we want to get the last reported status. If it is the same, no sense logging
+    # it.  This will let us send repeat messages to the server in case one is 
+    # missed.
+
+    # If last message for this door is different than the current msg
+    lastEntry = door_entry.objects.filter(doorNumber=msgDoorNumber).order_by('-pk')[0]
+    if lastEntry.isOpen != msgIsOpen:
+        dateTime = time.time()
+        doorEntry = door_entry.create(dateTime, msgDoorNumber, msgIsOpen)
+        doorEntry.save()
+    
+
