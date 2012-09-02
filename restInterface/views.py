@@ -44,6 +44,13 @@ def processDoorMsg(msg):
     # missed.
 
     # If last message for this door is different than the current msg
+    # Or if an entry does not yet exist(for a new door)
+    if len(door_entry.objects.filter(doorNumber=msgDoorNumber)) == 0:
+        # new door sensor received
+        dateTime = time.time()
+        doorEntry = door_entry.create(dateTime, msgDoorNumber, msgIsOpen)
+        doorEntry.save()
+        return
     lastEntry = door_entry.objects.filter(doorNumber=msgDoorNumber).order_by('-pk')[0]
     if lastEntry.isOpen != msgIsOpen:
         dateTime = time.time()
