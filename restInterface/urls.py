@@ -5,7 +5,6 @@ from django.conf.urls.defaults import patterns, include, url
 # admin.autodiscover()
 
 urlpatterns = patterns('restInterface.views',
-    url(r'^$', 'index'),
     url(r'^sensor_(?P<s>\d+)-temp_(?P<t>\d+)-datetime_(?P<d>\d+)/$','insert'),
     url(r'^msg/(?P<msg>.+)/$','processMsg'),
 
