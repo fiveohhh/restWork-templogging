@@ -7,7 +7,7 @@ print PROJ_DIR
 DEBUG = False 
 TEMPLATE_DEBUG = DEBUG
 
-LOGIN_URL = '/admin/login'
+LOGIN_URL = '/login/'
 
 ADMINS = (
     # ('Your Name', 'your_email@example.com'),
