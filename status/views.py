@@ -1,4 +1,5 @@
 # Create your views here.
+from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from restInterface.models import Temp_entry, door_entry, hvac_runtime
 from django.template import Context, loader
@@ -116,8 +117,8 @@ def detailedTemp(request, sensor):
 
 
 # renders main summary page for status
+@login_required
 def index(request):
-   
     ############ Get temps ###############
     # Get distinct sensor values
     distinctSensorVals = Temp_entry.objects.values('sensor').distinct()

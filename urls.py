@@ -7,7 +7,8 @@ admin.autodiscover()
 urlpatterns = patterns('',
     url(r'^restInterface/', include('restInterface.urls')),
     url(r'^status/', include('status.urls')),
-
+    url(r'^login/$', 'django.contrib.auth.views.login', {'template_name':'admin/login.html'}),
+    url(r'^logout/$', 'django.contrib.auth.views.logout'),
 
     # Examples:
     # url(r'^$', 'leeHouseSite.views.home', name='home'),
