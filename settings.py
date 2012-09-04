@@ -4,7 +4,7 @@ import os
 PROJ_DIR = os.path.dirname(__file__) 
 print PROJ_DIR
 
-DEBUG = True 
+DEBUG = False 
 TEMPLATE_DEBUG = DEBUG
 
 LOGIN_URL = '/admin/login'
