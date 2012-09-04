@@ -9,9 +9,8 @@ urlpatterns = patterns('',
     url(r'^status/', include('status.urls')),
     url(r'^login/$', 'django.contrib.auth.views.login', {'template_name':'admin/login.html'}),
     url(r'^logout/$', 'django.contrib.auth.views.logout'),
-
     # Examples:
-    # url(r'^$', 'leeHouseSite.views.home', name='home'),
+    url(r'^$', 'home_page.views.index'),
     # url(r'^leeHouseSite/', include('leeHouseSite.foo.urls')),
 
     # Uncomment the admin/doc line below to enable admin documentation:
