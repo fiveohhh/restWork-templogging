@@ -181,7 +181,9 @@ def index(request):
         door = {}
         door['name'] = 'Unknown: '
         if d.doorNumber == 0:
-            door['name'] = 'Garage: '
+            door['name'] = 'Garage_2: '
+        elif d.doorNumber == 1:
+            door['name'] = 'Garage_1: '
         
         door['doorStatus'] = "Open"
         if d.isOpen == 0:
