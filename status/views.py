@@ -175,14 +175,17 @@ def index(request):
         doorHistory = door_entry.objects.filter(doorNumber=door['doorNumber'])
         lastEntry = doorHistory.order_by('dateTime').reverse()[0]
         lastDoorVals.append(lastEntry)
+    
+    parser = SafeConfigParser()
+    parser.read(SETTINGS_FILE)
+
 
     for d in lastDoorVals:
         door = {}
         door['name'] = 'Unknown: '
-        if d.doorNumber == 0:
-            door['name'] = 'Garage_2: '
-        elif d.doorNumber == 1:
-            door['name'] = 'Garage_1: '
+    
+        if parser.has_option('doors', str(d.doorNumber)):
+            door['name'] = parser.get('doors', str(d.doorNumber))
         
         door['doorStatus'] = "Open"
         if d.isOpen == 0:

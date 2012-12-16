@@ -5,7 +5,7 @@ PROJ_DIR = os.path.dirname(__file__)
 
 SETTINGS_FILE = '/home/andy/houseSettings'
 
-DEBUG = False
+DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
 LOGIN_URL = '/login/'
