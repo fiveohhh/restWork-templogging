@@ -1,5 +1,5 @@
 from django.http import HttpResponse
-from restInterface.models import Temp_entry, door_entry
+from restInterface.models import Temp_entry, door_entry, Presence_entry
 from django.db.models import Max
 import time
 import datetime
@@ -26,12 +26,24 @@ def insert(request, s, t, d):
 
 def processMsg(request, msg):
     if (msg.startswith("DOR")):
-        processDoorMsg(msg) 
+        processDoorMsg(msg)
+    elif (msg.startswith("PRS")):
+        processPresenceMsg(msg) 
     else:
-        print "Unknown detected"
+        HttpResponse("Unknown msg detected")
         # Unknown message received
     
     return HttpResponse("ok")
+
+def processPresenceMsg(msg):
+    #PRSXXYYZ
+    #XX=ID, YY=location, Z=isArriving(0=left, 1=arrived)
+    presence_id = msg[3:5]
+    location = msg[5:7]
+    arrived = msg[7:8]
+    p = Presence_entry.create(time.time(), int(presence_id), int(location), int(arrived))
+    p.save()
+    print 'sdfdfaved..'
 
 def processDoorMsg(msg):
     # DORXYZ -- X=destination, Y=doorNumber, Z=isOpen

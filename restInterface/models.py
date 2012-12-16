@@ -1,13 +1,26 @@
 from django.db import models
 import datetime
 
+class Presence_entry(models.Model):
+    dateTime = models.IntegerField(db_index=True)#datetime presence observed
+    location = models.IntegerField(db_index=True)# location of presence
+    presence_ID = models.IntegerField(db_index=True)# id of "thing"
+    isArriving = models.IntegerField()# did thing leave or arrive
+
+    # 0 if leaving 1 if arriving 
+    def create(date, p_id, loc, leave_or_arrive):
+        return Presence_entry(  dateTime = date, 
+                                presence_ID = p_id,
+                                location = loc, 
+                                isArriving = leave_or_arrive)
+    create = staticmethod(create)
+
 class Temp_entry(models.Model):
     dateTime = models.IntegerField(db_index=True) #datetime as unixepoch gmt
     sensor = models.IntegerField(db_index=True)   # id of sensor
     temp = models.IntegerField()     # temp as temp in Kelvin * 100
     
     def create(date, sen, tmpVal):
-        print tmpVal
         return Temp_entry(dateTime = date, sensor = sen, temp = tmpVal)
     create = staticmethod(create) 
 
@@ -22,7 +35,6 @@ class door_entry(models.Model):
     dateTime = models.IntegerField()    # datetime as unixepoch gmt
 
     def create(date, doorNum, isOpe):
-        print isOpe
         return door_entry(dateTime = date, doorNumber = doorNum, isOpen = isOpe)
     create = staticmethod(create)
 
