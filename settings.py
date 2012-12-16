@@ -2,9 +2,10 @@
 import os
 
 PROJ_DIR = os.path.dirname(__file__) 
-print PROJ_DIR
 
-DEBUG = False 
+SETTINGS_FILE = '/home/andy/houseSettings'
+
+DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 
 LOGIN_URL = '/login/'

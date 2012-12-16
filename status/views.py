@@ -6,18 +6,17 @@ from django.template import Context, loader
 import datetime
 from django.core.cache import cache
 import time
-
+from ConfigParser import SafeConfigParser
+from settings import SETTINGS_FILE
 
 #returns the string for numbered sensor
 def getSensorName(sensor):
-    if sensor == 48: 
-        return 'Garage'
-    elif sensor == 49:
-        return 'Outside'
-    elif sensor == 50:
-        return 'Kitchen'
-    else:
-        return 'Unknown'
+    parser = SafeConfigParser()
+    parser.read(SETTINGS_FILE)
+    for t_sensor in parser.options('temp sensors'):
+        if sensor == int(t_sensor):
+            return parser.get('temp sensors',t_sensor)
+    return 'Unknown'
 
 # Holds information from a single temp logging event
 class IndividualTempReading:
