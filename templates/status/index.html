@@ -11,6 +11,13 @@
        Heat: {{ h.heatUsage }} minutes<br> Cool: {{ h.coolUsage}} minutes <br>
     {% endfor %}
 <br>
+
+<span class="sectionHeading">Presence:</span><br>
+    {% for p in presences %}
+        <span class="presenceString">{{p.name}} {{p.arrived_or_left}} {{p.location}} <span class="updated"> Updated:{{p.dateTime}}</span></span><br>
+    {% endfor %}
+<br>
+
 <span class="sectionHeading">Door status:</span><br>
     {% for d in doors %}
         <span class="doorName">{{ d.name }}:</span><span class="doorStatus">{{d.doorStatus}}</span><span class="updated"> Updated:{{d.updated}}</span><br>

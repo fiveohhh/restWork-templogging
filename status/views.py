@@ -1,7 +1,7 @@
 # Create your views here.
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
-from restInterface.models import Temp_entry, door_entry, hvac_runtime
+from restInterface.models import Temp_entry, door_entry, hvac_runtime, Presence_entry
 from django.template import Context, loader
 import datetime
 from django.core.cache import cache
@@ -118,6 +118,31 @@ def detailedTemp(request, sensor):
 # renders main summary page for status
 @login_required
 def index(request):
+    # Get presence vals to display on status page
+    presences = []
+    parser = SafeConfigParser()
+    parser.read(SETTINGS_FILE)
+    if parser.has_option('presence', 'displayed_status'):
+        opts = parser.get('presence', 'displayed_status')
+        opts = opts.split(',')
+        opts = [o.strip() for o in opts]
+        for o in opts:
+            if parser.has_option('presence', o):
+                presence = {}
+                presenceHistory = Presence_entry.objects.filter(presence_ID = o)
+                lastEntry = presenceHistory.order_by('dateTime').reverse()[0]
+                presence['name'] = parser.get('presence', o)
+                presence['dateTime'] = str(datetime.datetime.fromtimestamp(lastEntry.dateTime))
+                presence['location'] = parser.get('location',str(lastEntry.location))
+                presence['arrived_or_left'] = 'left'
+                if lastEntry.isArriving:
+                    presence['arrived_or_left'] = 'arrived at'
+                presences.append(presence)
+
+ 
+
+
+
     ############ Get temps ###############
     # Get distinct sensor values
     distinctSensorVals = Temp_entry.objects.values('sensor').distinct()
@@ -211,6 +236,7 @@ def index(request):
     c = Context({
         'temps' : temps,
         'doors' : doors,
+        'presences' : presences,
         'hvac_usage' : hvac_usage,
         'outsideTempHistory' : outsideTempHistory,
         'insideTempHistory' : insideTempHistory
