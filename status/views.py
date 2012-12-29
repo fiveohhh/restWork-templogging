@@ -161,7 +161,7 @@ def index(request):
         tempEntry = {}
         
         #TODO Format these strings so they look decent on the web page
-        tempEntry['temp'] = str(((t.temp/100.0) - 273.15) * 1.8 + 32) + 'F' 
+        tempEntry['temp'] = str(round(((t.temp/100.0) - 273.15) * 1.8 + 32,1)) + 'F' 
         tempEntry['updated'] = str(datetime.datetime.fromtimestamp(t.dateTime))
         tempEntry['name'] = getSensorName(t.sensor) + ': '
         temps.append(tempEntry)
