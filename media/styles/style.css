@@ -1,4 +1,8 @@
-span.temp {color:blue;}
-span.updated{font-style:italic;font-size:small;}
-span.sectionHeading{font-size:large;font-weight:bold;}
+@import url(http://fonts.googleapis.com/css?family=Open+Sans);
+td.tempBox {background:  #799458; padding:  10px; color:  #fff;}
+span.tempName {}
+span.temp {color:blue; font-weight:bold;font-size-large}
+span.updated{font-style:italic;font-size:small;color:LightGray}
+span.sectionHeading{font-family: 'Open Sans', sans-serif;font-size:large;font-weight:bold;}
+body{font-family: 'Open Sans', sans-serif;}
 h1{background-color:gray}

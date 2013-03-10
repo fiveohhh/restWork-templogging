@@ -2,9 +2,17 @@
 {% block heading %}Status{% endblock %}
 {% block content %}
 <span class="sectionHeading">Temp:</span><br>
-    {% for t in temps %}
-       <span class="tempSensor">{{ t.name }}</span><span class="temp">{{t.temp}}</span><span class="updated"> Updated:{{t.updated}}</span><br>
-    {% endfor %}
+    <table class="boxes" width="100%">
+        <tbody><tr>
+            {% for t in temps %}
+                <td class="tempBox">
+                    <span class="tempName">{{ t.name }}</span><br>
+                    <span class="temp">{{t.temp}}</span><br>
+                    <span class="updated"> {{t.updated}}</span><br>
+                </td>
+            {% endfor %}
+        </tr></tbody>
+    </table>
 <br>
 <span class="sectionHeading">Yesterdays HVAC usage:</span><br>
     {% for h in hvac_usage %}
