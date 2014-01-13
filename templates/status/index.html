@@ -47,6 +47,9 @@
             {% for t in insideTempHistory %}
                 [new Date({{t.dateTime.year}}, {{t.dateTime.month}}-1,{{t.dateTime.day}},{{t.dateTime.hour}},{{t.dateTime.minute}},{{t.dateTime.second}}),null,{{t.temp}}],
             {% endfor %}
+            {% for t in garageTempHistory %}
+                [new Date({{t.dateTime.year}}, {{t.dateTime.month}}-1,{{t.dateTime.day}},{{t.dateTime.hour}},{{t.dateTime.minute}},{{t.dateTime.second}}),null,{{t.temp}}],
+            {% endfor %}
         ]);
 
         var options = {

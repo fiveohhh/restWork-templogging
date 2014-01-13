@@ -183,7 +183,11 @@ def index(request):
 
     insideTempHistory = getHistoryWithDateTime(Temp_entry.objects.filter(sensor=50), 60*60*24, 6*24)
     cache.set('temp_entries_i', insideTempHistory,120)
-    cache.get('temp_entries_i') 
+    cache.get('temp_entries_i')
+    
+    garageTempHistory = getHistoryWithDateTime(Temp_entry.objects.filter(sensor=48), 60*60*24, 6*24)
+    cache.set('temp_entries_g', garageTempHistory,120)
+    cache.get('temp_entries_g')
     
 
 
@@ -239,7 +243,8 @@ def index(request):
         'presences' : presences,
         'hvac_usage' : hvac_usage,
         'outsideTempHistory' : outsideTempHistory,
-        'insideTempHistory' : insideTempHistory
+        'insideTempHistory' : insideTempHistory,
+        'garageTempHistory' : garageTempHistory
     })
 
     return HttpResponse(t.render(c))
