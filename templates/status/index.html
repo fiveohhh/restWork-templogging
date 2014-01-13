@@ -43,13 +43,13 @@
         data.addColumn('number', 'Garage');
         data.addRows([
             {% for t in outsideTempHistory %}
-                [new Date({{t.dateTime.year}}, {{t.dateTime.month}}-1,{{t.dateTime.day}},{{t.dateTime.hour}},{{t.dateTime.minute}},{{t.dateTime.second}}),{{t.temp}},null],
+                [new Date({{t.dateTime.year}}, {{t.dateTime.month}}-1,{{t.dateTime.day}},{{t.dateTime.hour}},{{t.dateTime.minute}},{{t.dateTime.second}}),{{t.temp}},null,null],
             {% endfor %}
             {% for t in insideTempHistory %}
-                [new Date({{t.dateTime.year}}, {{t.dateTime.month}}-1,{{t.dateTime.day}},{{t.dateTime.hour}},{{t.dateTime.minute}},{{t.dateTime.second}}),null,{{t.temp}}],
+                [new Date({{t.dateTime.year}}, {{t.dateTime.month}}-1,{{t.dateTime.day}},{{t.dateTime.hour}},{{t.dateTime.minute}},{{t.dateTime.second}}),null,{{t.temp}},null],
             {% endfor %}
             {% for t in garageTempHistory %}
-                [new Date({{t.dateTime.year}}, {{t.dateTime.month}}-1,{{t.dateTime.day}},{{t.dateTime.hour}},{{t.dateTime.minute}},{{t.dateTime.second}}),null,{{t.temp}}],
+                [new Date({{t.dateTime.year}}, {{t.dateTime.month}}-1,{{t.dateTime.day}},{{t.dateTime.hour}},{{t.dateTime.minute}},{{t.dateTime.second}}),null,null,{{t.temp}}],
             {% endfor %}
         ]);
 
