@@ -29,11 +29,41 @@ def processMsg(request, msg):
         processDoorMsg(msg)
     elif (msg.startswith("PRS")):
         processPresenceMsg(msg) 
+    elif (msg.startswith("TMP")):
+        processTemperatureMsg(msg)
     else:
         HttpResponse("Unknown msg detected")
         # Unknown message received
     
     return HttpResponse("ok")
+
+def processTemperatureMsg(msg):
+    #TMPXXTTTTT
+    #XX = src, TTTTT = temp in Kelvin*100
+    s = int(msg[3:5])
+    t = int(msg[5:10])
+    currentTime = round(time.time())
+    lastEntryForSensor = Temp_entry.objects.filter(sensor=s).aggregate(Max('dateTime'))
+    lastTimeEntryOccured = lastEntryForSensor['dateTime__max']
+
+    retString = ''
+
+    secondsSinceLastEntry = currentTime - lastTimeEntryOccured
+    if secondsSinceLastEntry >= MINIMUM_SECONDS_BETWEEN_TEMP_LOGGING:
+        te = Temp_entry.create(int(currentTime), int(s), int(t))
+        te.save()
+        retString += '{Succesful:Logged:' + str(t) + ' to sensor:' + str(s) + '}'
+    else:
+        retString += '{Msg:Not Logged, last entry was ' + str(secondsSinceLastEntry) + ' seconds ago}'
+    return HttpResponse(retString)
+ 
+
+
+    source = msg[3:5]
+    temperature = float(msg[5:10])/100
+    print source
+    print temperature
+    print "temp"
 
 def processPresenceMsg(msg):
     #PRSXXYYZ
