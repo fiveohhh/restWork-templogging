@@ -40,6 +40,7 @@
         data.addColumn('datetime', 'hms');
         data.addColumn('number', 'Outside');
         data.addColumn('number', 'Kitchen');
+        data.addColumn('number', 'Garage');
         data.addRows([
             {% for t in outsideTempHistory %}
                 [new Date({{t.dateTime.year}}, {{t.dateTime.month}}-1,{{t.dateTime.day}},{{t.dateTime.hour}},{{t.dateTime.minute}},{{t.dateTime.second}}),{{t.temp}},null],
